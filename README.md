@@ -52,3 +52,8 @@ Make sure you have the following installed:
    npm run build
    ```
 
+   To preview the built application locally:
+
+   ```bash
+   npm run preview
+   ```
