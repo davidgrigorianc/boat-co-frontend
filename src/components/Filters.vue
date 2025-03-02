@@ -8,6 +8,7 @@
         <v-tabs
           v-model="filters.boat_type"
           vertical
+          @update:model-value="applyFilters"
         >
           <v-tab value="all">
             All
@@ -124,6 +125,7 @@ export default {
   props: {
     loading: Boolean,
   },
+  emits: ['apply-filters'],
   setup(props, {emit}) {
     const filters = ref({
       category: "all",
@@ -170,7 +172,6 @@ export default {
       }
     };
 
-
     const filteredBoatModels = computed(() => {
       return boatModels.value[filters.value.manufacturer_id] || [];
     });
@@ -210,11 +211,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.range-values {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 8px;
-}
-</style>

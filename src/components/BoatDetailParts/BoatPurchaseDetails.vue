@@ -60,12 +60,6 @@
           >
             Purchase Boat
           </v-btn>
-          <p
-            v-if="errorMessage"
-            class="error-text"
-          >
-            {{ errorMessage }}
-          </p>
         </v-col>
       </v-row>
     </v-card-text>
@@ -75,13 +69,14 @@
 <script setup>
 import {ref} from 'vue';
 import {doPaymentCheckout} from "@/api/index.js";
+import {useNotificationStore} from "@/stores/notificationStore.js";
 
 const props = defineProps({
   price: {
     type: Number,
     required: true,
   },
-  boat_id: {
+  boatId: {
     type: Number,
     required: true,
   },
@@ -97,30 +92,21 @@ const props = defineProps({
 
 const loading = ref(false);
 const errorMessage = ref('');
-
+const notificationStore = useNotificationStore();
 const handleCheckout = async () => {
   loading.value = true;
   errorMessage.value = '';
   try {
     const data = await doPaymentCheckout({
       amount: props.price,
-      boat_id: props.boat_id
+      boat_id: props.boatId
     });
     window.location.href = data.url;
   } catch (error) {
-    errorMessage.value = error.response?.data?.message ?? 'Failed to initiate checkout. Please try again.';
+    const errorMessage = error.response?.data?.message ?? 'Failed to initiate checkout. Please try again.';
+    notificationStore.showNotification(errorMessage, 'error')
   } finally {
     loading.value = false;
   }
 };
 </script>
-
-<style scoped>
-#card-element {
-  margin-top: 20px;
-  width: 100%;
-  height: 40px;
-  padding: 10px;
-  border: 1px solid #ccc;
-}
-</style>

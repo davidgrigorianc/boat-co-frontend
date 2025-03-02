@@ -51,7 +51,7 @@ const handlePurchase = async () => {
       >
         <BoatPurchaseDetails
           :boat="boat"
-          :boat_id="boat.id"
+          :boat-id="boat.id"
           :price="boat.price"
           :format-price="formatPrice"
           :handle-purchase="handlePurchase"

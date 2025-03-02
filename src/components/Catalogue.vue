@@ -3,6 +3,7 @@ import {ref, onMounted} from "vue";
 import BoatCard from "@/components/BoatCard.vue";
 import Filters from "@/components/Filters.vue";
 import {fetchBoats} from "@/api/index.js";
+import {useNotificationStore} from "@/stores/notificationStore.js";
 
 export default {
   name: 'Catalogue',
@@ -25,6 +26,7 @@ export default {
       {title: "Length: Longest First", value: "length_desc"},
     ]);
 
+    const notificationStore = useNotificationStore();
     const searchBoats = async (userInitiated = false) => {
       if (userInitiated) isUserSearching.value = true;
       loading.value = true;
@@ -34,7 +36,8 @@ export default {
         totalPages.value = response.meta.last_page;
         boatsCount.value = response.meta.total;
       } catch (error) {
-        console.error("Failed to fetch boats", error);
+        const errorMessage = error.response.data.message ?? 'An error occurred!'
+        notificationStore.showNotification(errorMessage, 'error')
       } finally {
         loading.value = false;
         isUserSearching.value = false;
@@ -133,12 +136,18 @@ export default {
       </template>
     </v-row>
 
-    <v-pagination
-      v-if="totalPages > 1"
-      v-model="page"
-      :length="totalPages"
-      @update:model-value="searchBoats(true)"
-    />
+    <v-row justify="center">
+      <v-col cols="8">
+        <v-container style="max-width: 500px">
+          <v-pagination
+            v-if="totalPages > 1"
+            v-model="page"
+            :length="totalPages"
+            @update:model-value="searchBoats(true)"
+          />
+        </v-container>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
